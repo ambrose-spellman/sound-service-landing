@@ -17,6 +17,6 @@ export default defineConfig({
     // assetsDir: 'assets',
   },
   publicDir: 'public',
-  base: './',
+  base: '/sound-service-landing/',
  
 });
