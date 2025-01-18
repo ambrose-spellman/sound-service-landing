@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { resolve } from 'path';
+import {viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
   build: {
@@ -18,5 +19,11 @@ export default defineConfig({
   },
   publicDir: 'public',
   base: '/sound-service-landing/',
- 
+  plugins: [
+    viteStaticCopy({
+      targets: [
+        { src: 'CNAME', dest: '' } // Adjust the path if CNAME is in a different location
+      ],
+    })
+  ]
 });
