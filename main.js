@@ -3,7 +3,6 @@ import MicroModal from "micromodal";
 import { Notify } from "notiflix/build/notiflix-notify-aio";
 import "./style.css";
 import "./modal.css";
-import Botpoison from '@botpoison/browser';
 const body = document.querySelector("body");
 const header = document.querySelector("header");
 const loginBtn = document.getElementById("loginBtn");
@@ -120,33 +119,33 @@ radioLinks.forEach((link) => {
   });
 });
 // Добавляем обработчики событий для аудио при загрузке страницы
-document.addEventListener('DOMContentLoaded', () => {
-  const audioElements = document.querySelectorAll('audio');
+// document.addEventListener('DOMContentLoaded', () => {
+//   const audioElements = document.querySelectorAll('audio');
   
-  audioElements.forEach(audio => {
-    // Проверяем все аудио элементы при загрузке
-    console.log('Found audio element:', audio);
-    console.log('Audio source:', audio.currentSrc || audio.src);
+//   audioElements.forEach(audio => {
+//     // Проверяем все аудио элементы при загрузке
+//     console.log('Found audio element:', audio);
+//     console.log('Audio source:', audio.currentSrc || audio.src);
     
-    audio.addEventListener('error', (e) => {
-      console.error('Audio loading error:', e);
-      console.error('Error code:', e.target.error.code);
-    });
+//     audio.addEventListener('error', (e) => {
+//       console.error('Audio loading error:', e);
+//       console.error('Error code:', e.target.error.code);
+//     });
 
-    audio.addEventListener('loadeddata', () => {
-      console.log('Audio loaded successfully');
-    });
+//     audio.addEventListener('loadeddata', () => {
+//       console.log('Audio loaded successfully');
+//     });
 
-    audio.addEventListener('playing', () => {
-      console.log('Audio started playing');
-    });
+//     audio.addEventListener('playing', () => {
+//       console.log('Audio started playing');
+//     });
 
-    // Добавляем обработчик для отслеживания возможности воспроизведения
-    audio.addEventListener('canplay', () => {
-      console.log('Audio can be played');
-    });
-  });
-});
+//     // Добавляем обработчик для отслеживания возможности воспроизведения
+//     audio.addEventListener('canplay', () => {
+//       console.log('Audio can be played');
+//     });
+//   });
+// });
 
 // Offer show more
 offerButtons.forEach((button) => {
@@ -183,79 +182,82 @@ Notify.init({
     textColor: "#362000",
   },
 });
-// Проверяем импорт
-console.log('BotPoison imported:', !!Botpoison);
-// Проверяем создание экземпляра
-try {
-  const botpoison = new Botpoison({
-    publicKey: 'pk_85422045-9a4a-49ff-8022-9a784c2bef7d'
-  });
-  console.log('BotPoison instance created:', !!botpoison);
-} catch (error) {
-  console.error('BotPoison initialization error:', error);
-}
 
-const botpoison = new Botpoison({
-  publicKey: 'pk_85422045-9a4a-49ff-8022-9a784c2bef7d',
-  captchaOptions: {
-    mode: 'visible', // делаем капчу видимой
-    timeout: 10000   // таймаут в миллисекундах
-  }
-});
 // Инициализируем капчу при загрузке страницы
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('form').forEach(form => {
-    const captchaContainer = form.querySelector('.botpoison-captcha');
-    if (captchaContainer) {
-      botpoison.render({
-        container: captchaContainer,
-        mode: 'visible'
-      });
-    }
-  });
-});
+
 // Form
 document.querySelectorAll(".sendFormBtn").forEach((btn) => {
   btn.addEventListener("click", async (e) => {
     e.preventDefault();
+    console.log('Кнопка отправки нажата');
 
     const form = btn.closest("form");
     const inputs = form.querySelectorAll("input");
     let isFormValid = validateInputs(inputs);
-    try {
-      setLoading(true);
-       // Ждем результат проверки капчи
-       console.log('Starting captcha challenge...');
-       const solution = await botpoison.challenge({
-        mode: 'visible', // Явно указываем видимый режим
-        container: form.querySelector('.botpoison-captcha') // Указываем контейнер
-      });
-      if (!solution) {
-        throw new Error('Пожалуйста, подтвердите капчу');
-      }
- 
-       
-      // Get form data
-      const formData = new FormData(form);
-      formData.append('botpoison', solution);
 
-      // Simulate server response
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      if (isFormValid) {
-        Notify.success(
-          "Спасибо за заявку! <br/> Мы свяжемся с вами в течение рабочего дня.",
-        );
-        clearInputs(form);
-      }
-    } catch (error) {
-      console.error('Captcha or submission error:', error);
-      // Handle error (show message to user)
-      Notify.failure('Пожалуйста, подтвердите, что вы не робот');
-    } finally{
-      setLoading(false);
+    if (!isFormValid) {
+      console.error('Форма не прошла валидацию!');
+      return;
     }
-   
+
+      // Находим поля в текущей форме
+      const nameInput = form.querySelector('.input-name');
+      const companyInput = form.querySelector('.input-company');
+      const phoneInput = form.querySelector('.phoneMask');
+    // Проверяем наличие полей и выводим отладочную информацию
+    console.log('Найденные поля:', {
+      nameInput: nameInput?.value,
+      companyInput: companyInput?.value,
+      phoneInput: phoneInput?.value
+    });
+          // Проверяем, что все поля найдены
+    if (!nameInput || !companyInput || !phoneInput) {
+      console.error('Не найдены все необходимые поля формы');
+      return;
+    }v
+
+    const formData = {
+      name: nameInput.value,
+      company_name: companyInput.value,
+      phone: phoneInput.value,
+      from: 'asia'
+    };
+
+    console.log('Отправляемые данные:', formData);
+
+    try {
+      console.log('Начинаем отправку на сервер...');
+      
+      const response = await fetch('https://soundservice.me/api/v1/leads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        mode: 'cors', // добавляем явное указание режима CORS
+        credentials: 'include', // добавляем передачу куки, если нужно
+        body: JSON.stringify(formData)
+      });
+
+      console.log('Ответ получен:', response);
+      
+      const responseData = await response.json();
+      console.log('Данные ответа:', responseData);
+
+      if (!response.ok) {
+        throw new Error(`Ошибка сервера: ${response.status}`);
+      }
+
+      // Успешная отправка
+      Notify.success(
+        "Спасибо за заявку! <br/> Мы свяжемся с вами в течение рабочего дня.",
+      );
+      clearInputs(form);
+
+    } catch (error) {
+      console.error('Ошибка:', error);
+      alert('Произошла ошибка при отправке формы. Пожалуйста, попробуйте еще раз.');
+    }
   });
 });
 
