@@ -183,8 +183,22 @@ Notify.init({
   },
 });
 
-// Инициализируем капчу при загрузке страницы
 
+function setLoading(isLoading) {
+  const button = document.querySelector('.sendFormBtn');
+  const buttonText = button.querySelector('span');
+  
+  if (isLoading) {
+    buttonText.textContent = 'Отправка...';
+    button.disabled = true;
+  } else {
+    buttonText.textContent = 'Отправить';
+    button.disabled = false;
+  }
+}
+
+const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+const apiUrl = 'https://soundservice.me/api/v1/leads';
 // Form
 document.querySelectorAll(".sendFormBtn").forEach((btn) => {
   btn.addEventListener("click", async (e) => {
@@ -214,7 +228,7 @@ document.querySelectorAll(".sendFormBtn").forEach((btn) => {
     if (!nameInput || !companyInput || !phoneInput) {
       console.error('Не найдены все необходимые поля формы');
       return;
-    }v
+    }
 
     const formData = {
       name: nameInput.value,
@@ -228,11 +242,12 @@ document.querySelectorAll(".sendFormBtn").forEach((btn) => {
     try {
       console.log('Начинаем отправку на сервер...');
       
-      const response = await fetch('https://soundservice.me/api/v1/leads', {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH"
         },
         mode: 'cors', // добавляем явное указание режима CORS
         credentials: 'include', // добавляем передачу куки, если нужно
@@ -256,7 +271,7 @@ document.querySelectorAll(".sendFormBtn").forEach((btn) => {
 
     } catch (error) {
       console.error('Ошибка:', error);
-      alert('Произошла ошибка при отправке формы. Пожалуйста, попробуйте еще раз.');
+      console.error('Произошла ошибка при отправке формы. Пожалуйста, попробуйте еще раз.');
     }
   });
 });
@@ -320,15 +335,3 @@ document.addEventListener("DOMContentLoaded", function () {
   const video = document.querySelector("video");
   video.play();
 });
-function setLoading(isLoading) {
-  const button = document.querySelector('.sendFormBtn');
-  const buttonText = button.querySelector('span');
-  
-  if (isLoading) {
-    buttonText.textContent = 'Отправка...';
-    button.disabled = true;
-  } else {
-    buttonText.textContent = 'Отправить';
-    button.disabled = false;
-  }
-}
