@@ -18,7 +18,7 @@ export default defineConfig({
     assetsInlineLimit: 0,
     outDir: 'dist',
     emptyOutDir: true,
-    // assetsDir: 'assets',
+    assetsDir: 'assets',
   },
   publicDir: 'public',
   base: './',
@@ -32,9 +32,11 @@ export default defineConfig({
       name: 'html-transform',
       transformIndexHtml(html) {
         // Transform link and script tags to use relative paths
+        // html = html.replace(/(href|src)="\//g, '$1=".')
+        html = html.replace(/(href|src)="\.\/assets/g, '$1="assets');
+         // Remove crossorigin attribute from script and link tags
+         html = html.replace(/\scrossorigin(?:=["']?(?:anonymous|use-credentials)?["']?)?/gi, '')
         return html
-          .replace(/(href|src)="\//g, '$1=".')
-          .replace(/(href|src)="\.\/assets/g, '$1="assets');
       }
     }
   ]

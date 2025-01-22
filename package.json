@@ -19,6 +19,7 @@
     "vite-plugin-static-copy": "^2.2.0"
   },
   "dependencies": {
+    "@botpoison/browser": "^0.1.30",
     "imask": "^7.6.1",
     "micromodal": "^0.4.10",
     "notiflix": "^3.2.7"

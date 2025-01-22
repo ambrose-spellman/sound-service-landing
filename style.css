@@ -136,3 +136,28 @@ header.active {
 .error span {
   @apply block;
 }
+
+.hidden-audio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.audio-container {
+  position: relative;
+}
+
+.audio-container.playing .icon-dot,
+.audio-container.playing .icon-play {
+  opacity: 0 !important;
+}
+
+.audio-container.playing .icon-pause {
+  opacity: 1 !important;
+}

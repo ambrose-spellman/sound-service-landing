@@ -1,10 +1,9 @@
 import IMask from "imask";
 import MicroModal from "micromodal";
 import { Notify } from "notiflix/build/notiflix-notify-aio";
-
 import "./style.css";
 import "./modal.css";
-
+import Botpoison from '@botpoison/browser';
 const body = document.querySelector("body");
 const header = document.querySelector("header");
 const loginBtn = document.getElementById("loginBtn");
@@ -44,20 +43,108 @@ document.querySelectorAll(".mobile-link").forEach((link) => {
     }
   });
 });
-
 // Radio links
+let currentlyPlaying = null;
+
 radioLinks.forEach((link) => {
   link.addEventListener("click", (e) => {
     e.preventDefault();
 
+    const audioContainer = link.querySelector('.audio-container');
+    const audio = link.querySelector('audio');
+
+    console.log('Audio element:', audio); // Проверяем элемент
+    console.log('Audio source:', audio?.currentSrc || audio?.src); // Проверяем путь к файлу
+    console.log('Audio ready state:', audio?.readyState); // Проверяем состояние загрузки
+
+    // Обработка active класса для ссылки
     if (link.classList.contains("active")) {
       link.classList.remove("active");
+      // Останавливаем аудио при деактивации
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        audioContainer.classList.remove('playing');
+        currentlyPlaying = null;
+      }
       return;
     }
 
-    radioLinks.forEach((link) => link.classList.remove("active"));
+    // Удаляем active класс у всех ссылок и останавливаем все аудио
+    radioLinks.forEach((otherLink) => {
+      otherLink.classList.remove("active");
+      const otherAudio = otherLink.querySelector('audio');
+      if (otherAudio) {
+        otherAudio.pause();
+        otherAudio.currentTime = 0;
+        otherLink.querySelector('.audio-container')?.classList.remove('playing');
+      }
+    });
 
     link.classList.add("active");
+
+    // Воспроизводим аудио
+    if (audio) {
+      try {
+        // Принудительно устанавливаем громкость и размьючиваем
+        audio.volume = 1;
+        audio.muted = false;
+        
+        // Пробуем воспроизвести
+        const playPromise = audio.play();
+        
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log('Successfully playing audio');
+              audioContainer.classList.add('playing');
+              currentlyPlaying = audio;
+            })
+            .catch(error => {
+              console.error('Error playing audio:', error);
+              audioContainer.classList.remove('playing');
+              currentlyPlaying = null;
+            });
+        } else {
+          console.log('Play promise is undefined, trying direct play');
+          audio.play();
+          audioContainer.classList.add('playing');
+          currentlyPlaying = audio;
+        }
+      } catch (error) {
+        console.error('Error in audio playback:', error);
+      }
+    } else {
+      console.error('Audio element not found in link:', link);
+    }
+  });
+});
+// Добавляем обработчики событий для аудио при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+  const audioElements = document.querySelectorAll('audio');
+  
+  audioElements.forEach(audio => {
+    // Проверяем все аудио элементы при загрузке
+    console.log('Found audio element:', audio);
+    console.log('Audio source:', audio.currentSrc || audio.src);
+    
+    audio.addEventListener('error', (e) => {
+      console.error('Audio loading error:', e);
+      console.error('Error code:', e.target.error.code);
+    });
+
+    audio.addEventListener('loadeddata', () => {
+      console.log('Audio loaded successfully');
+    });
+
+    audio.addEventListener('playing', () => {
+      console.log('Audio started playing');
+    });
+
+    // Добавляем обработчик для отслеживания возможности воспроизведения
+    audio.addEventListener('canplay', () => {
+      console.log('Audio can be played');
+    });
   });
 });
 
@@ -96,23 +183,79 @@ Notify.init({
     textColor: "#362000",
   },
 });
+// Проверяем импорт
+console.log('BotPoison imported:', !!Botpoison);
+// Проверяем создание экземпляра
+try {
+  const botpoison = new Botpoison({
+    publicKey: 'pk_85422045-9a4a-49ff-8022-9a784c2bef7d'
+  });
+  console.log('BotPoison instance created:', !!botpoison);
+} catch (error) {
+  console.error('BotPoison initialization error:', error);
+}
 
+const botpoison = new Botpoison({
+  publicKey: 'pk_85422045-9a4a-49ff-8022-9a784c2bef7d',
+  captchaOptions: {
+    mode: 'visible', // делаем капчу видимой
+    timeout: 10000   // таймаут в миллисекундах
+  }
+});
+// Инициализируем капчу при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('form').forEach(form => {
+    const captchaContainer = form.querySelector('.botpoison-captcha');
+    if (captchaContainer) {
+      botpoison.render({
+        container: captchaContainer,
+        mode: 'visible'
+      });
+    }
+  });
+});
 // Form
 document.querySelectorAll(".sendFormBtn").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
+  btn.addEventListener("click", async (e) => {
     e.preventDefault();
 
     const form = btn.closest("form");
     const inputs = form.querySelectorAll("input");
     let isFormValid = validateInputs(inputs);
+    try {
+      setLoading(true);
+       // Ждем результат проверки капчи
+       console.log('Starting captcha challenge...');
+       const solution = await botpoison.challenge({
+        mode: 'visible', // Явно указываем видимый режим
+        container: form.querySelector('.botpoison-captcha') // Указываем контейнер
+      });
+      if (!solution) {
+        throw new Error('Пожалуйста, подтвердите капчу');
+      }
+ 
+       
+      // Get form data
+      const formData = new FormData(form);
+      formData.append('botpoison', solution);
 
-    if (isFormValid) {
-      Notify.success(
-        "Спасибо за заявку! <br/> Мы свяжемся с вами в течение рабочего дня.",
-      );
-
-      clearInputs(form);
+      // Simulate server response
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      if (isFormValid) {
+        Notify.success(
+          "Спасибо за заявку! <br/> Мы свяжемся с вами в течение рабочего дня.",
+        );
+        clearInputs(form);
+      }
+    } catch (error) {
+      console.error('Captcha or submission error:', error);
+      // Handle error (show message to user)
+      Notify.failure('Пожалуйста, подтвердите, что вы не робот');
+    } finally{
+      setLoading(false);
     }
+   
   });
 });
 
@@ -175,3 +318,15 @@ document.addEventListener("DOMContentLoaded", function () {
   const video = document.querySelector("video");
   video.play();
 });
+function setLoading(isLoading) {
+  const button = document.querySelector('.sendFormBtn');
+  const buttonText = button.querySelector('span');
+  
+  if (isLoading) {
+    buttonText.textContent = 'Отправка...';
+    button.disabled = true;
+  } else {
+    buttonText.textContent = 'Отправить';
+    button.disabled = false;
+  }
+}

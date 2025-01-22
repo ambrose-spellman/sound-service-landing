@@ -11,6 +11,8 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="modal.css">
+    <link rel="stylesheet" href="style.css">
   </head>
   <body
     class="relative bg-bgc text-base text-white caret-transparent md:text-lg"
@@ -60,7 +62,7 @@
         href="#"
         class="inline-flex items-center gap-[6px] text-base font-medium text-silver"
       >
-        <span class="h-4 w-4"><img src="/user.svg" alt="user" /></span>
+        <span class="h-4 w-4"><img src="images/user.svg" alt="user" /></span>
         <span>Вход</span>
       </a>
     </div>
@@ -70,7 +72,7 @@
         <div class="flex items-center">
           <div class="h-10 w-[100px] shrink-0">
             <a href="/index.html">
-              <img src="/logo.svg" alt="logo" />
+              <img src="images/logo.svg" alt="logo" />
             </a>
           </div>
 
@@ -217,7 +219,7 @@
                 <p>Мы перезвоним в течении рабочего дня</p>
               </div>
               <div>
-                <form class="flex flex-col gap-4">
+                <form class="flex flex-col gap-4" id="contactForm">
                   <!-- Add error class to wrap input with error -->
                   <div class="input-wrapper flex w-full flex-col">
                     <input
@@ -233,7 +235,7 @@
                   <div class="input-wrapper relative flex w-full flex-col">
                     <img
                       class="absolute left-8 top-[23px] h-4 w-6"
-                      src="/kz.svg"
+                      src="images/kz.svg"
                       alt="kz"
                     />
                     <input
@@ -256,7 +258,7 @@
                       Что то не так
                     </span>
                   </div>
-
+                  <div class="h-captcha" data-sitekey="3f980a02-a58c-4a3a-b874-732adfe239fc"></div>
                   <button
                     class="sendFormBtn w-full rounded-[4px] bg-primary px-8 py-4 font-semibold text-main transition-transform duration-300 will-change-transform hover:-translate-y-px"
                   >
@@ -285,7 +287,7 @@
         >
           <div class="w-[130px]">
             <a href="/index.html">
-              <img src="/logo-footer.svg" alt="logo" />
+              <img src="images/logo-footer.svg" alt="logo" />
             </a>
           </div>
           <ul class="mt-auto hidden flex-col gap-6 text-sm sm:flex">
@@ -396,14 +398,14 @@
               <a
                 href="#"
                 class="brightness-75 transition-all duration-500 hover:brightness-100"
-                ><img src="/instagram.svg" alt="instagram"
+                ><img src="images/instagram.svg" alt="instagram"
               /></a>
             </li>
             <li>
               <a
                 href="#"
                 class="brightness-75 transition-all duration-500 hover:brightness-100"
-                ><img src="/facebook.svg" alt="facebook"
+                ><img src="images/facebook.svg" alt="facebook"
               /></a>
             </li>
           </ul>
@@ -443,7 +445,7 @@
         </div>
       </div>
     </footer>
-
+    <script src="https://unpkg.com/@botpoison/browser" async></script>
     <script type="module" src="/main.js"></script>
   </body>
 </html>
