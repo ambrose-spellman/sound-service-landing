@@ -15,6 +15,25 @@
 
   <script type="module" src="assets/main-BINDXM8k.js"></script>
   <link rel="stylesheet" href="assets/main.css">
+
+  <script>
+
+    var verifyCallback = function (response) {
+      console.log(response);
+    };
+    let widgetId1;
+    
+
+    var onloadCallback = function () {
+      // Renders the HTML element with id 'example1' as a reCAPTCHA widget.
+      // The id of the reCAPTCHA widget is assigned to 'widgetId1'.
+      widgetId1 = grecaptcha.render('indexHtmlForm', {
+        'sitekey': '6Ld7ur8qAAAAANtr_xQ7Q59y-_wlUM4Ue5a6BX7p',
+        'theme': 'dark'
+      });
+    
+    };
+  </script>
 </head>
 
 <body class="relative bg-bgc text-base text-white caret-transparent md:text-lg">
@@ -50,7 +69,8 @@
       </span>
     </a>
 
-    <a href="https://soundservice.me/users/sign_in" class="inline-flex items-center gap-[6px] text-base font-medium text-silver">
+    <a href="https://soundservice.me/users/sign_in"
+      class="inline-flex items-center gap-[6px] text-base font-medium text-silver">
       <span class="h-4 w-4"><img src="./images/user.svg" alt="user" /></span>
       <span>Вход</span>
     </a>
@@ -83,7 +103,7 @@
             </li>
             <li>
               <a class="text-base font-medium text-white opacity-60 transition-opacity duration-500 hover:opacity-100"
-                href="/contacts.html">
+                href="./contacts.html">
                 Контакты
               </a>
             </li>
@@ -868,7 +888,7 @@
                 Что то не так
               </span>
             </div>
-            <div class="h-captcha" data-sitekey="3f980a02-a58c-4a3a-b874-732adfe239fc"></div>
+            <div id="indexHtmlForm"></div>
             <button
               class="sendFormBtn h-[62px] w-full rounded-[4px] bg-primary px-8 py-4 font-semibold text-main transition-transform duration-300 will-change-transform hover:translate-x-px lg:w-1/3">
               <span>Отправить</span>
@@ -944,7 +964,7 @@
           </li>
           <li>
             <a class="text-white opacity-60 transition-opacity duration-500 hover:opacity-100"
-              href="/contacts.html">Контакты</a>
+              href="./contacts.html">Контакты</a>
           </li>
           <li>
             <a class="text-white opacity-60 transition-opacity duration-500 hover:opacity-100" href="#help">Помощь</a>
@@ -1013,11 +1033,6 @@
       </div>
     </div>
   </footer>
-
-  <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer>
-  </script>
-  <script src="assets/captcha.js"></script>
-
 </body>
 
 </html>

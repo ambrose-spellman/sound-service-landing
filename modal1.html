@@ -14,6 +14,20 @@
 
   <script type="module" src="assets/main-BINDXM8k.js"></script>
   <link rel="stylesheet" href="assets/main.css">
+  <script>
+
+    var verifyCallback = function (response) {
+      console.log(response);
+    };
+    let       widgetId2;
+
+    var onloadCallback = function () {
+      widgetId2 = grecaptcha.render(document.getElementById('modal1Form'), {
+        'sitekey': '6Ld7ur8qAAAAANtr_xQ7Q59y-_wlUM4Ue5a6BX7p',
+        'theme': 'dark'
+      });
+    };
+  </script>
 </head>
 
 <body class="relative bg-bgc text-base text-white caret-transparent md:text-lg">
@@ -138,7 +152,7 @@
             <p>Мы перезвоним в течении рабочего дня</p>
           </div>
           <div>
-            <form class="flex flex-col gap-4" id="contactForm">
+            <form class="flex flex-col gap-4" id="contactForm" action="javascript:grecaptcha.reset(widgetId2);">
               <!-- Add error class to wrap input with error -->
               <div class="input-wrapper flex w-full flex-col">
                 <input
@@ -167,7 +181,7 @@
                   Что то не так
                 </span>
               </div>
-              <div class="h-captcha" data-sitekey="3f980a02-a58c-4a3a-b874-732adfe239fc"></div>
+              <div id="modal1Form"></div>
               <button
                 class="sendFormBtn w-full rounded-[4px] bg-primary px-8 py-4 font-semibold text-main transition-transform duration-300 will-change-transform hover:-translate-y-px"
                 type="submit">
@@ -294,9 +308,6 @@
       </div>
     </div>
   </footer>
-  <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer>
-  </script>
-  <script src="assets/captcha.js"></script>
 </body>
 
 </html>
