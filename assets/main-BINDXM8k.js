@@ -3814,7 +3814,7 @@ St.Notify.init({
   useIcon: !1,
   success: { background: "#FAC114", textColor: "#362000" },
 });
-const Xt = "https://soundservice.me/api/v1/leads";
+const Xt = "https://soundservice.me/asia_quick_request";
 document.querySelectorAll(".sendFormBtn").forEach((r) => {
   r.addEventListener("click", async (t) => {
     t.preventDefault(), console.log("Кнопка отправки нажата");
